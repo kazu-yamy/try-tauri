@@ -4,7 +4,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { invoke } from '@tauri-apps/api/tauri'
 import { emit, listen } from '@tauri-apps/api/event'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher'
 import { format } from 'path'
 
@@ -12,19 +12,26 @@ const isClient = typeof window !== 'undefined'
 
 isClient
 
-const handleUploadClock = async (event: Params) => {
-	const file = event.target.files;
-	const formData = new FormData();
-	formData.append('file', file);
-
-	try {
-		console.log(file);
-	} catch (e) {
-		console.error(e);
-	}
-};
 
 const Home: NextPage = () => {
+
+	const [image, setImage] = useState(null);
+	const [createObjectURL, setCreateObjectURL] = useState(String);
+
+	const handleUploadClock = async (event: any) => {
+		const file = event.target.files[0];
+		const formData = new FormData();
+		formData.append('file', file);
+	
+		try {
+			setImage(file)
+			//setCreateObjectURL(URL.createObjectURL(file))
+			console.log(formData.values.toString.arguments);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	useEffect(() => {
 		invoke('data_command', { number: 42 })
 			.then((res) => console.log({ res }))
